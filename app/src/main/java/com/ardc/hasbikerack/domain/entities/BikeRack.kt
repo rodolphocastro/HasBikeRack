@@ -13,5 +13,21 @@ data class Coordinates(val x: Double, val y: Double) {
  * @param quantityOfSpots The number of spots this rack has (aka: how many bikes can park here)
  * @param coords The latitude/longitude for this rack
  */
-data class BikeRack(val name: String, val quantityOfSpots: Int, val coords: Coordinates) {
+data class BikeRack(
+    val name: String,
+    val quantityOfSpots: Int,
+    val coords: Coordinates,
+    val quantityOfTakenSpots: Int = 0
+) {
+
+    fun parkBike(): BikeRack {
+        TODO("Not yet implemented")
+    }
+
+    fun takeBike(): BikeRack {
+        TODO("Not yet implemented")
+    }
+
+    val availableSpots: Int
+        get() = quantityOfSpots - quantityOfTakenSpots
 }

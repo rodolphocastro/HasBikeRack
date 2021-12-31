@@ -21,13 +21,14 @@ class `Bike Rack tests` {
         assertEquals(bogusName, got.name)
         assertEquals(bogusQtyOfSpots, got.quantityOfSpots)
         assertEquals(bogusCoords, got.coords)
-        assertEquals(bogusQtyOfSpots, got.availableSpots)
+        assertEquals(bogusQtyOfSpots, got.availableSpots)   // Because available = qty - taken
     }
 
     @Test
     fun `Given a rack, when I park a bike, then the available spots are reduced by one`() {
         // Arrange
-        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
+        val takenSpots = 0
+        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords, takenSpots)
         val expected = bogusQtyOfSpots - 1
 
         // Act
@@ -41,8 +42,7 @@ class `Bike Rack tests` {
     fun `Given a rack, when I remove a bike, then the available spots are increased by one`() {
         // Arrange
         val takenSpots = bogusQtyOfSpots
-        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
-            .withTaken(takenSpots)
+        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords, takenSpots)
         val expected = (bogusQtyOfSpots - takenSpots) + 1
 
         // Act
@@ -56,7 +56,7 @@ class `Bike Rack tests` {
     fun `Given a rack without any parked bikes, when I remove a bike, then an Exception is throw`() {
         // Arrange
         val act: () -> Unit = {
-            BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
+            BikeRack(bogusName, bogusQtyOfSpots, bogusCoords, 0)
                 .takeBike()
         }
 
@@ -70,8 +70,7 @@ class `Bike Rack tests` {
     fun `Given a rack without available spots, when I park a bike, then an Exception is throw`() {
         // Arrange
         val act: () -> Unit = {
-            BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
-                .withTaken(bogusQtyOfSpots)
+            BikeRack(bogusName, bogusQtyOfSpots, bogusCoords, bogusQtyOfSpots)
                 .parkBike()
         }
 
