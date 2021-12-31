@@ -2,9 +2,12 @@
 
 package com.ardc.hasbikerack.domain.entities
 
+import junitparams.Parameters
 import org.junit.Assert.*
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(junitparams.JUnitParamsRunner::class)
 class `Bike Rack tests` {
     private val bogusName = "The bad place"
     private val bogusQtyOfSpots = 42
@@ -25,11 +28,17 @@ class `Bike Rack tests` {
     }
 
     @Test
-    fun `Given a rack, when I park a bike, then the available spots are reduced by one`() {
+    @Parameters(
+        "20",
+        "1",
+        "100"
+    )
+    fun `Given a rack, when I park a bike, then the available spots are reduced by one`(
+        qtyOfSpots: Int
+    ) {
         // Arrange
-        val takenSpots = 0
-        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords, takenSpots)
-        val expected = bogusQtyOfSpots - 1
+        val subject = BikeRack(bogusName, qtyOfSpots, bogusCoords)
+        val expected = qtyOfSpots - 1
 
         // Act
         val got: BikeRack = subject.parkBike()
@@ -39,11 +48,19 @@ class `Bike Rack tests` {
     }
 
     @Test
-    fun `Given a rack, when I remove a bike, then the available spots are increased by one`() {
+    @Parameters(
+        "20, 19",
+        "10, 1",
+        "1, 1",
+        "2000, 1999"
+    )
+    fun `Given a rack, when I remove a bike, then the available spots are increased by one`(
+        qtyOfSpots: Int,
+        takenSpots: Int
+    ) {
         // Arrange
-        val takenSpots = bogusQtyOfSpots
-        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords, takenSpots)
-        val expected = (bogusQtyOfSpots - takenSpots) + 1
+        val subject = BikeRack(bogusName, qtyOfSpots, bogusCoords, takenSpots)
+        val expected = (qtyOfSpots - takenSpots) + 1
 
         // Act
         val got: BikeRack = subject.takeBike()
