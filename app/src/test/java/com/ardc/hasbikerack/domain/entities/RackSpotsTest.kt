@@ -67,10 +67,10 @@ class `Rack Spots tests` {
     ) {
         // Arrange
         val subject = BikeRack.RackSpots(totalSpots, takenSpots)
-        val expected = takenSpots + 1
+        val expected = (totalSpots - takenSpots) - 1
 
         // Act
-        val got: Int = subject.availableSpots
+        val got: Int = (subject park 1).availableSpots
 
         // Assert
         assertEquals(expected, got)
@@ -88,10 +88,10 @@ class `Rack Spots tests` {
     ) {
         // Arrange
         val subject = BikeRack.RackSpots(totalSpots, takenSpots)
-        val expected = takenSpots + 1
+        val expected = (totalSpots - takenSpots) + 1
 
         // Act
-        val got: Int = subject.availableSpots
+        val got: Int = (subject remove 1).availableSpots
 
         // Assert
         assertEquals(expected, got)

@@ -23,9 +23,40 @@ data class BikeRack(
 
     /**
      * The spots available on a Rack.
+     * @param totalSpots the total amount of spots
+     * @param takenSpots the spots already taken
      */
     data class RackSpots(val totalSpots: Int, val takenSpots: Int = 0) {
 
+        /**
+         * parks a number of bicycles into a spot.
+         * @throws DomainException
+         */
+        @Throws(DomainException::class)
+        infix fun park(amount: Int): RackSpots {
+            val result = takenSpots + amount
+            if (result > totalSpots)
+                throw DomainException("A rack's taken spots must always be equal or lesser than it's total spots")
+
+            return copy(takenSpots = result)
+        }
+
+        /**
+         * removes a number of bicycles from a spot.
+         */
+        infix fun remove(amount: Int): RackSpots {
+            val result = takenSpots - amount
+            if (result < 0)
+                throw DomainException("A rack's taken spots must always be equal or greater than zero")
+
+            return copy(takenSpots = result)
+        }
+
+        /**
+         * the amount of spots available for parking
+         */
+        val availableSpots: Int
+            get() = totalSpots - takenSpots
     }
 
     /**
