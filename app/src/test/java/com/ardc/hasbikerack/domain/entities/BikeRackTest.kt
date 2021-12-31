@@ -63,7 +63,7 @@ class `Bike Rack tests` {
         // Act
 
         // Assert
-        assertThrows(Exception::class.java, act)
+        assertThrows(BikeRack.DomainException::class.java, act)
     }
 
     @Test
@@ -77,6 +77,7 @@ class `Bike Rack tests` {
         // Act
 
         // Assert
-        assertThrows(Exception::class.java, act)
+        assertThrows(BikeRack.DomainException::class.java, act)
     }
+
 }
