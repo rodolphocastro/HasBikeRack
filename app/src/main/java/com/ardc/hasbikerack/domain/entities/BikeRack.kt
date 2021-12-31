@@ -22,6 +22,13 @@ data class BikeRack(
 ) {
 
     /**
+     * The spots available on a Rack.
+     */
+    data class RackSpots(val totalSpots: Int, val takenSpots: Int = 0) {
+
+    }
+
+    /**
      * Parks a single bike into the rack.
      * @throws DomainException
      */
