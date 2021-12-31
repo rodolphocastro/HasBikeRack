@@ -11,7 +11,7 @@ class `Bike Rack tests` {
     private val bogusCoords = Coordinates(1.0, 1.0)
 
     @Test
-    fun `Given a name, a number of spots and a set of coordinates, when constructed, then a Rack is created`() {
+    fun `Given a name, a number of spots, a number of taken spots and a set of coordinates, when constructed, then a Rack is created`() {
         // Arrange
 
         // Act
@@ -21,5 +21,63 @@ class `Bike Rack tests` {
         assertEquals(bogusName, got.name)
         assertEquals(bogusQtyOfSpots, got.quantityOfSpots)
         assertEquals(bogusCoords, got.coords)
+        assertEquals(bogusQtyOfSpots, got.availableSpots)
+    }
+
+    @Test
+    fun `Given a rack, when I park a bike, then the available spots are reduced by one`() {
+        // Arrange
+        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
+        val expected = bogusQtyOfSpots - 1
+
+        // Act
+        val got: BikeRack = subject.parkBike()
+
+        // Assert
+        assertEquals(expected, got.availableSpots)
+    }
+
+    @Test
+    fun `Given a rack, when I remove a bike, then the available spots are increased by one`() {
+        // Arrange
+        val takenSpots = bogusQtyOfSpots
+        val subject = BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
+            .withTaken(takenSpots)
+        val expected = (bogusQtyOfSpots - takenSpots) + 1
+
+        // Act
+        val got: BikeRack = subject.takeBike()
+
+        // Assert
+        assertEquals(expected, got.availableSpots)
+    }
+
+    @Test
+    fun `Given a rack without any parked bikes, when I remove a bike, then an Exception is throw`() {
+        // Arrange
+        val act: () -> Unit = {
+            BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
+                .takeBike()
+        }
+
+        // Act
+
+        // Assert
+        assertThrows(Exception::class.java, act)
+    }
+
+    @Test
+    fun `Given a rack without available spots, when I park a bike, then an Exception is throw`() {
+        // Arrange
+        val act: () -> Unit = {
+            BikeRack(bogusName, bogusQtyOfSpots, bogusCoords)
+                .withTaken(bogusQtyOfSpots)
+                .parkBike()
+        }
+
+        // Act
+
+        // Assert
+        assertThrows(Exception::class.java, act)
     }
 }
