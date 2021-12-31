@@ -21,11 +21,11 @@ data class BikeRack(
 ) {
 
     fun parkBike(): BikeRack {
-        TODO("Not yet implemented")
+        return copy(quantityOfTakenSpots = this.quantityOfTakenSpots + 1)
     }
 
     fun takeBike(): BikeRack {
-        TODO("Not yet implemented")
+        return copy(quantityOfTakenSpots = this.quantityOfTakenSpots - 1)
     }
 
     val availableSpots: Int
