@@ -10,15 +10,13 @@ data class Coordinates(val x: Double, val y: Double) {
 /**
  * A Bicycle Rack where one can park his/hers bicycle.
  * @param name The name of this rack
- * @param quantityOfSpots The number of spots this rack has (aka: how many bikes can park here)
+ * @param spots The number of spots this rack has
  * @param coords The latitude/longitude for this rack
- * @param quantityOfTakenSpots The amount of spots taken, defaults to 0
  */
 data class BikeRack(
     val name: String,
-    val quantityOfSpots: Int,
+    val spots: RackSpots,
     val coords: Coordinates,
-    val quantityOfTakenSpots: Int = 0
 ) {
 
     /**
@@ -68,11 +66,7 @@ data class BikeRack(
      */
     @Throws(DomainException::class)
     fun parkBike(): BikeRack {
-        val result = quantityOfTakenSpots + 1
-        if (result > quantityOfSpots)
-            throw DomainException("A rack's taken spots must always be equal or lesser than it's total spots")
-
-        return copy(quantityOfTakenSpots = result)
+        return copy(spots = (this.spots park 1))
     }
 
     /**
@@ -81,18 +75,14 @@ data class BikeRack(
      */
     @Throws(DomainException::class)
     fun takeBike(): BikeRack {
-        val result = quantityOfTakenSpots - 1
-        if (result < 0)
-            throw DomainException("A rack's taken spots must always be equal or greater than zero")
-
-        return copy(quantityOfTakenSpots = result)
+        return copy(spots = (this.spots remove 1))
     }
 
     /**
      * The amount of available spots.
      */
     val availableSpots: Int
-        get() = quantityOfSpots - quantityOfTakenSpots
+        get() = spots.availableSpots
 
     /**
      * This Exception means that a domain rule for Bike Racks has been broken.
