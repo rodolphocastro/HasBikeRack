@@ -18,7 +18,7 @@ class `Bike Rack tests` {
         // Arrange
 
         // Act
-        val got = BikeRack(bogusName, BikeRack.RackSpots(bogusQtyOfSpots), bogusCoords)
+        val got = BikeRack(bogusName, BikeRack.RackSpotsState(bogusQtyOfSpots), bogusCoords)
 
         // Assert
         assertEquals(bogusName, got.name)
@@ -37,7 +37,7 @@ class `Bike Rack tests` {
         qtyOfSpots: Int
     ) {
         // Arrange
-        val subject = BikeRack(bogusName, BikeRack.RackSpots(qtyOfSpots), bogusCoords)
+        val subject = BikeRack(bogusName, BikeRack.RackSpotsState(qtyOfSpots), bogusCoords)
         val expected = qtyOfSpots - 1
 
         // Act
@@ -59,7 +59,7 @@ class `Bike Rack tests` {
         takenSpots: Int
     ) {
         // Arrange
-        val subject = BikeRack(bogusName, BikeRack.RackSpots(qtyOfSpots, takenSpots), bogusCoords)
+        val subject = BikeRack(bogusName, BikeRack.RackSpotsState(qtyOfSpots, takenSpots), bogusCoords)
         val expected = (qtyOfSpots - takenSpots) + 1
 
         // Act
@@ -73,7 +73,7 @@ class `Bike Rack tests` {
     fun `Given a rack without any parked bikes, when I remove a bike, then an Exception is throw`() {
         // Arrange
         val act: () -> Unit = {
-            BikeRack(bogusName, BikeRack.RackSpots(bogusQtyOfSpots), bogusCoords)
+            BikeRack(bogusName, BikeRack.RackSpotsState(bogusQtyOfSpots), bogusCoords)
                 .takeBike()
         }
 
@@ -87,7 +87,7 @@ class `Bike Rack tests` {
     fun `Given a rack without available spots, when I park a bike, then an Exception is throw`() {
         // Arrange
         val act: () -> Unit = {
-            BikeRack(bogusName, BikeRack.RackSpots(bogusQtyOfSpots, bogusQtyOfSpots), bogusCoords)
+            BikeRack(bogusName, BikeRack.RackSpotsState(bogusQtyOfSpots, bogusQtyOfSpots), bogusCoords)
                 .parkBike()
         }
 
@@ -97,4 +97,90 @@ class `Bike Rack tests` {
         assertThrows(BikeRack.DomainException::class.java, act)
     }
 
+    @Test
+    @Parameters(
+        "1, 0",
+        "2, 2",
+        "200, 0"
+    )
+    fun `Given a total number of spots and a number of taken spots, when I construct, then a Rack Spots is created`(
+        totalSpots: Int,
+        takenSpots: Int
+    ) {
+        // Arrange
+        val expectedAvailableSpots = totalSpots - takenSpots
+
+        // Act
+        val subject = BikeRack.RackSpotsState(totalSpots, takenSpots)
+        val (gotSpots, gotTakenSpots) = subject
+        val gotAvailableSpots: Int = subject.availableSpots
+
+        // Assert
+        assertEquals(totalSpots, gotSpots)
+        assertEquals(takenSpots, gotTakenSpots)
+        assertEquals(expectedAvailableSpots, gotAvailableSpots)
+    }
+
+    @Test
+    @Parameters(
+        "0, 1",
+        "1000, 10000",
+        "1, 2"
+    )
+    fun `Given a total number of spots and a number of taken spots greater than the total number, when I construct, then an Exception happens`(
+        totalSpots: Int,
+        takenSpots: Int
+    ) {
+        // Arrange
+        val act: () -> Unit = {
+            BikeRack.RackSpotsState(totalSpots, takenSpots)
+        }
+
+        // Act
+
+        // Assert
+        assertThrows(BikeRack.DomainException::class.java, act)
+    }
+
+    @Test
+    @Parameters(
+        "1, 0",
+        "2, 1",
+        "200, 150"
+    )
+    fun `Given a spot with taken spots less than available spots, when I increment a taken spot, then there's one less available spot`(
+        totalSpots: Int,
+        takenSpots: Int
+    ) {
+        // Arrange
+        val subject = BikeRack.RackSpotsState(totalSpots, takenSpots)
+        val expected = (totalSpots - takenSpots) - 1
+
+        // Act
+        val got: Int = (subject park 1).availableSpots
+
+        // Assert
+        assertEquals(expected, got)
+    }
+
+    @Test
+    @Parameters(
+        "1, 1",
+        "2, 1",
+        "200, 150"
+    )
+    fun `Given a spot with taken spots greater than zero, when I decrement a taken spot, then there's one more available spot`(
+        totalSpots: Int,
+        takenSpots: Int
+    ) {
+        // Arrange
+        val subject = BikeRack.RackSpotsState(totalSpots, takenSpots)
+        val expected = (totalSpots - takenSpots) + 1
+
+        // Act
+        val got: Int = (subject remove 1).availableSpots
+
+        // Assert
+        assertEquals(expected, got)
+    }
 }

@@ -15,7 +15,7 @@ data class Coordinates(val x: Double, val y: Double) {
  */
 data class BikeRack(
     val name: String,
-    val spots: RackSpots,
+    val spots: RackSpotsState,
     val coords: Coordinates,
 ) {
 
@@ -24,7 +24,7 @@ data class BikeRack(
      * @param totalSpots the total amount of spots
      * @param takenSpots the spots already taken
      */
-    data class RackSpots(val totalSpots: Int, val takenSpots: Int = 0) {
+    data class RackSpotsState(val totalSpots: Int, val takenSpots: Int = 0) {
         init {
             when {
                 totalSpots < 0 ->
@@ -41,7 +41,7 @@ data class BikeRack(
          * @throws DomainException
          */
         @Throws(DomainException::class)
-        infix fun park(amount: Int): RackSpots {
+        infix fun park(amount: Int): RackSpotsState {
             return copy(takenSpots = this.takenSpots + amount)
         }
 
@@ -49,7 +49,7 @@ data class BikeRack(
          * removes a number of bicycles from a spot.
          */
         @Throws(DomainException::class)
-        infix fun remove(amount: Int): RackSpots {
+        infix fun remove(amount: Int): RackSpotsState {
             return copy(takenSpots = this.takenSpots - amount)
         }
 
