@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "772264643406",
+    "project_id": "hasbikerack",
+    "storage_bucket": "hasbikerack.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772264643406:android:7321e3db350067e5682c1f",
+        "android_client_info": {
+          "package_name": "com.ardc.hasbikerack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "772264643406-uvafg9q8jl2ojddit08cvq439ulnhfal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaMEBRZfXGtvpOzi6kPuvfku0wjtYxPLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "772264643406-uvafg9q8jl2ojddit08cvq439ulnhfal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
