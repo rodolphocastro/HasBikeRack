@@ -275,3 +275,4 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,androidstudio,windows,linux,android
 
 .idea/inspectionProfiles/
+.idea/deploymentTargetDropDown.xml
