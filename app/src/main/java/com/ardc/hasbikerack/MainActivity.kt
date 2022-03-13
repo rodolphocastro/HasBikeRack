@@ -3,7 +3,10 @@ package com.ardc.hasbikerack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ardc.hasbikerack.ui.theme.HasBikeRackTheme
@@ -48,7 +51,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             activityState = remember {
-                mutableStateOf<UserInformation?>(null)
+                mutableStateOf(null)
             }
 
             // Attempt to recover last signed in user
@@ -57,15 +60,20 @@ class MainActivity : ComponentActivity() {
             }
 
             HasBikeRackTheme {
+                val colModifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth();
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    activityState.value?.let {
-                        Column {
+                    Column(
+                        modifier = colModifier,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        activityState.value?.let {
                             Greeting(it.name)
                             SignOutButton()
-                        }
-                    } ?: run {
-                        Column {
+                        } ?: run {
                             Text(text = stringResource(id = R.string.signin_welcome_text))
                             SignInButton()
                         }
