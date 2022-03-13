@@ -3,6 +3,7 @@ package com.ardc.hasbikerack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -39,6 +40,13 @@ class MainActivity : ComponentActivity() {
     private lateinit var activityState: MutableState<UserInformation?>
 
     /**
+     * Exposes the current user - for testing purposes.
+     */
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal val currentUser
+        get() = activityState.value
+
+    /**
      * Contract for launching (and reacting) to FirebaseUI's Auth routines.
      */
     private val signInLauncher = registerForActivityResult(
@@ -62,7 +70,7 @@ class MainActivity : ComponentActivity() {
             HasBikeRackTheme {
                 val colModifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth();
+                    .fillMaxWidth()
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Column(

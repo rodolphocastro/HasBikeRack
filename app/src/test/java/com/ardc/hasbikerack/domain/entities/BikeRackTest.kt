@@ -3,7 +3,8 @@
 package com.ardc.hasbikerack.domain.entities
 
 import junitparams.Parameters
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -59,7 +60,8 @@ class `Bike Rack tests` {
         takenSpots: Int
     ) {
         // Arrange
-        val subject = BikeRack(bogusName, BikeRack.RackSpotsState(qtyOfSpots, takenSpots), bogusCoords)
+        val subject =
+            BikeRack(bogusName, BikeRack.RackSpotsState(qtyOfSpots, takenSpots), bogusCoords)
         val expected = (qtyOfSpots - takenSpots) + 1
 
         // Act
@@ -87,7 +89,11 @@ class `Bike Rack tests` {
     fun `Given a rack without available spots, when I park a bike, then an Exception is throw`() {
         // Arrange
         val act: () -> Unit = {
-            BikeRack(bogusName, BikeRack.RackSpotsState(bogusQtyOfSpots, bogusQtyOfSpots), bogusCoords)
+            BikeRack(
+                bogusName,
+                BikeRack.RackSpotsState(bogusQtyOfSpots, bogusQtyOfSpots),
+                bogusCoords
+            )
                 .parkBike()
         }
 
