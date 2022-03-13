@@ -3,41 +3,126 @@ package com.ardc.hasbikerack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ardc.hasbikerack.ui.theme.HasBikeRackTheme
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+
+/**
+ * DTO for User's Information.
+ */
+data class UserInformation(val name: String)
 
 class MainActivity : ComponentActivity() {
+
     /**
-     * Name of the last known user.
+     * Mutable state for this Activity.
      */
-    private var userName: String = "John Doe"
+    private lateinit var activityState: MutableState<UserInformation?>
+
+    /**
+     * Contract for launching (and reacting) to FirebaseUI's Auth routines.
+     */
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract()
+    ) { res ->
+        this.onSignInResult(res)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Configure Google Sign In
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-//        val gsClient = GoogleSignIn.getClient(this, gso)
-        GoogleSignIn.getLastSignedInAccount(this)?.let {
-            userName = it.displayName ?: "John Doe"
-        }
-
         setContent {
+            activityState = remember {
+                mutableStateOf<UserInformation?>(null)
+            }
+
+            // Attempt to recover last signed in user
+            GoogleSignIn.getLastSignedInAccount(this)?.let {
+                activityState.value = UserInformation(it.displayName ?: "John Doe")
+            }
+
             HasBikeRackTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting(userName)
+                    activityState.value?.let {
+                        Column {
+                            Greeting(it.name)
+                            SignOutButton()
+                        }
+                    } ?: run {
+                        Column {
+                            Text(text = stringResource(id = R.string.signin_welcome_text))
+                            SignInButton()
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    /**
+     * Composes a button to sign users out.
+     */
+    @Composable
+    private fun SignOutButton() {
+        Button(onClick = {
+            AuthUI.getInstance()
+                .signOut(this).addOnCompleteListener {
+                    activityState.value = null
+                }
+        }) {
+            Text(text = stringResource(id = R.string.signout_button_text))
+        }
+    }
+
+    /**
+     * Composes a button to sign users in.
+     */
+    @Composable
+    private fun SignInButton() {
+        Button(onClick = {
+            // Choose authentication providers
+            val providers = arrayListOf(
+                AuthUI.IdpConfig.GoogleBuilder().build()
+            )
+
+            // Create and launch sign-in intent
+            val signInIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build()
+            signInLauncher.launch(signInIntent)
+        }) {
+            Text(text = stringResource(id = R.string.common_signin_button_text))
+        }
+    }
+
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        if (result.resultCode == RESULT_OK) {
+            // Successfully signed in
+            FirebaseAuth.getInstance().currentUser?.let {
+                activityState.value = UserInformation(it.displayName ?: "John Doe")
+            }
+        } else {
+            // Sign in failed. If response is null the user canceled the
+            // sign-in flow using the back button. Otherwise check
+            // response.getError().getErrorCode() and handle the error.
+            // ...
         }
     }
 }
