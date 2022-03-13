@@ -20,17 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.ardc.hasbikerack.domain.entities.UserInformation
 import com.ardc.hasbikerack.ui.theme.HasBikeRackTheme
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseAuth
-
-/**
- * DTO for User's Information.
- */
-data class UserInformation(val name: String)
 
 class MainActivity : ComponentActivity() {
 
@@ -64,7 +60,11 @@ class MainActivity : ComponentActivity() {
 
             // Attempt to recover last signed in user
             GoogleSignIn.getLastSignedInAccount(this)?.let {
-                activityState.value = UserInformation(it.displayName ?: "John Doe")
+                it.displayName?.let { name ->
+                    activityState.value = UserInformation(name)
+                } ?: run {
+                    activityState.value = UserInformation.Cyclist
+                }
             }
 
             HasBikeRackTheme {
@@ -132,7 +132,10 @@ class MainActivity : ComponentActivity() {
         if (result.resultCode == RESULT_OK) {
             // Successfully signed in
             FirebaseAuth.getInstance().currentUser?.let {
-                activityState.value = UserInformation(it.displayName ?: "John Doe")
+                it.displayName.let { name ->
+                    activityState.value = if (name == null)
+                        UserInformation.Cyclist else UserInformation(name)
+                }
             }
         } else {
             // Sign in failed. If response is null the user canceled the
